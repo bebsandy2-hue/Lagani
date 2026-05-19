@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Earn Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins;}
+body{background:#0b1020;color:#fff;}
+
+/* TOP */
+.header{
+background:linear-gradient(135deg,#1d4ed8,#06b6d4);
+padding:25px;
+border-bottom-left-radius:25px;
+border-bottom-right-radius:25px;
+}
+
+.header h1{font-size:24px;}
+
+.vip{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:10px;
+}
+
+.vip span{
+background:#fff;
+color:#1d4ed8;
+padding:5px 12px;
+border-radius:20px;
+font-weight:bold;
+font-size:12px;
+}
+
+/* BALANCE */
+.balance{
+margin-top:15px;
+background:rgba(255,255,255,0.15);
+padding:15px;
+border-radius:15px;
+}
+
+.balance h2{font-size:32px;}
+
+/* CONTAINER */
+.container{padding:15px;}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:15px;
+}
+
+.box{
+background:#151c33;
+padding:15px;
+border-radius:15px;
+text-align:center;
+cursor:pointer;
+}
+
+/* VIP CARD */
+.vipCard{
+margin-top:15px;
+background:#151c33;
+padding:15px;
+border-radius:15px;
+}
+
+.vipCard h3{margin-bottom:10px;}
+
+.level{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+font-size:14px;
+opacity:0.9;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#06b6d4;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+color:#000;
+}
+
+/* SECTION */
+.section{
+margin-top:15px;
+background:#151c33;
+padding:15px;
+border-radius:15px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:#0f172a;
+color:#fff;
+}
+
+/* HISTORY */
+.history{
+margin-top:10px;
+font-size:13px;
+line-height:22px;
+opacity:0.9;
+}
+
+/* BOTTOM */
+.bottom{
+position:fixed;
+bottom:0;
+width:100%;
+display:flex;
+justify-content:space-around;
+background:#111827;
+padding:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>VIP EARN PRO</h1>
+
+<div class="vip">
+<p>Welcome User</p>
+<span id="vipLevel">VIP 0</span>
+</div>
+
+<div class="balance">
+<p>Wallet Balance</p>
+<h2 id="balance">$0</h2>
+<p id="income">Daily Income: $0</p>
+</div>
+</div>
+
+<div class="container">
+
+<!-- GRID -->
+<div class="grid">
+<div class="box" onclick="addMoney()"> Demo Money</div>
+<div class="box" onclick="resetAll()"> Reset</div>
+<div class="box" onclick="showDeposit()"> Deposit</div>
+<div class="box" onclick="showWithdraw()"> Withdraw</div>
+</div>
+
+<!-- VIP SYSTEM -->
+<div class="vipCard">
+<h3>VIP Level System</h3>
+
+<div class="level">VIP 0 <span>Rs0/day</span></div>
+<div class="level">VIP 1 <span>Rs 160/day</span></div>
+<div class="level">VIP 2 <span>Rs 320/day</span></div>
+<div class="level">VIP 3 <span>Rs 600/day</span></div>
+<div class="level">VIP 4 <span>Rs1200/day</span></div>
+<div class="level">VIP 5 <span>Rs1800/day</span></div>
+
+<button onclick="upgradeVIP()">Upgrade VIP</button>
+</div>
+
+<!-- DEPOSIT -->
+<div class="section" id="depositBox" style="display:none;">
+<h3>Deposit</h3>
+<select>
+<option>Bank</option>
+<option>eSewa</option>
+</select>
+<input type="9801947031" Mohan Chaudhary="dAmt" placeholder="Amount">
+<button onclick="deposit()">Deposit</button>
+</div>
+
+<!-- WITHDRAW -->
+<div class="section" id="withdrawBox" style="display:none;">
+<h3>Withdraw</h3>
+<select>
+<option>Bank</option>
+<option>eSewa</option>
+</select>
+<input type="number" id="wAmt" placeholder="Amount">
+<button onclick="withdraw()">Withdraw</button>
+</div>
+
+<!-- HISTORY -->
+<div class="section">
+<h3>History</h3>
+<div class="history" id="history"></div>
+</div>
+
+</div>
+
+<div class="bottom">
+<button>Home</button>
+<button>Wallet</button>
+<button>VIP</button>
+<button>Profile</button>
+</div>
+
+<script>
+
+let balance = Number(localStorage.getItem("bal") || 0);
+let vip = Number(localStorage.getItem("vip") || 0);
+let history = JSON.parse(localStorage.getItem("his") || "[]");
+
+const incomeTable = [0,5,15,40,80,150];
+
+function update(){
+document.getElementById("balance").innerText = "$" + balance;
+document.getElementById("vipLevel").innerText = "VIP " + vip;
+document.getElementById("income").innerText = "Daily Income: $" + incomeTable[vip];
+document.getElementById("history").innerHTML =
+history.slice(-6).reverse().map(h=>"• "+h).join("<br>");
+}
+
+function save(){
+localStorage.setItem("bal",balance);
+localStorage.setItem("vip",vip);
+localStorage.setItem("his",JSON.stringify(history));
+update();
+}
+
+function addMoney(){
+balance += 100;
+history.push("+Rs100 Demo Added");
+save();
+}
+
+function resetAll(){
+balance=0;vip=0;history=[];
+save();
+}
+
+function deposit(){
+let a=Number(document.getElementById("dAmt").value);
+if(a>0){
+balance+=a;
+history.push("Deposited Rs"+a);
+save();
+alert("Success");
+}
+}
+
+function withdraw(){
+let a=Number(document.getElementById("wAmt").value);
+if(a>0 && a<=balance){
+balance-=a;
+history.push("Withdraw $"+a);
+save();
+alert("Request Sent");
+}else alert("Insufficient balance");
+}
+
+function upgradeVIP(){
+if(vip<5){
+vip++;
+history.push("Upgraded to VIP "+vip);
+save();
+}else{
+alert("Max VIP reached");
+}
+}
+
+function showDeposit(){
+document.getElementById("depositBox").style.display="block";
+document.getElementById("withdrawBox").style.display="none";
+}
+
+function showWithdraw(){
+document.getElementById("withdrawBox").style.display="block";
+document.getElementById("depositBox").style.display="none";
+}
+
+update();
+
+</script>
+
+</body>
+</html>
